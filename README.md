@@ -1,0 +1,2 @@
+# YPG-Scoreboard
+YPG Scoreboard
