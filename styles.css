@@ -78,3 +78,15 @@ span {
     font-weight: bold;
     margin-left: 10px;
 }
+
+/* Responsive design for mobile devices */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .container > div {
+        width: 100%;
+    }
+}
