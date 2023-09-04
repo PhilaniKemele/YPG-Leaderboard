@@ -1,1 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>YPG Scoreboard</title>
+</head>
+<body>
+    <h1>YPG Scoreboard</h1>
+    
+    <div>
+        <h2>Nations</h2>
+        <ul>
+            <li>Invincible: <span id="invincibleScore">0</span> points</li>
+            <li>Unbeatable: <span id="unbeatableScore">0</span> points</li>
+            <li>Flawless: <span id="flawlessScore">0</span> points</li>
+            <li>Impact: <span id="impactScore">0</span> points</li>
+        </ul>
+    </div>
+    
+    <div>
+        <h2>Update Points</h2>
+        <form id="updateForm">
+            <label for="nationSelect">Select Nation:</label>
+            <select id="nationSelect">
+                <option value="invincible">Invincible</option>
+                <option value="unbeatable">Unbeatable</option>
+                <option value="flawless">Flawless</option>
+                <option value="impact">Impact</option>
+            </select>
+            <br>
+            <label for="pointsInput">Points:</label>
+            <input type="number" id="pointsInput" min="0">
+            <br>
+            <label for="passwordInput">Password:</label>
+            <input type="password" id="passwordInput">
+            <br>
+            <button type="button" onclick="updatePoints()">Update</button>
+        </form>
+    </div>
+    
+    <script>
+        // Function to fetch and display JSON data from GitHub repository
+        function fetchDataFromGitHub() {
+            const githubDataUrl = 'https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/e643737e0c1721e48ce6beeebb18da4e4410bc82/scoreboard.json';
+
+            fetch(githubDataUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("invincibleScore").textContent = data.invincible;
+                    document.getElementById("unbeatableScore").textContent = data.unbeatable;
+                    document.getElementById("flawlessScore").textContent = data.flawless;
+                    document.getElementById("impactScore").textContent = data.impact;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        // Call the function to fetch and display data when the page loads
+        fetchDataFromGitHub();
+        
+        // Function to update points
+        function updatePoints() {
+            const selectedNation = document.getElementById("nationSelect").value;
+            const points = parseInt(document.getElementById("pointsInput").value);
+            const password = document.getElementById("passwordInput").value;
+
+            // Check if the entered password matches the actual password
+            if (password === "YPG2023") {
+                // Fetch the current JSON data
+                fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/e643737e0c1721e48ce6beeebb18da4e4410bc82/scoreboard.json')
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update the points for the selected nation
+                        data[selectedNation] += points;
+
+                        // Send the updated data back to the repository
+                        fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': 'Bearer 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', // Replace with your GitHub token
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                message: 'Update points for ' + selectedNation,
+                                content: btoa(JSON.stringify(data, null, 4)), // Convert data to Base64
+                                sha: 'e643737e0c1721e48ce6beeebb18da4e4410bc82', // New SHA of the file
+                            }),
+                        })
+                            .then(response => {
+                                if (response.status === 200) {
+                                    console.log('Points updated successfully');
+                                    // You can also update the displayed points on the webpage here
+                                    fetchDataFromGitHub(); // Refresh data after update
+                                } else {
+                                    console.error('Failed to update points');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                console.error('Invalid password');
+            }
+        }
+    </script>
+</body>
+</html>
 
