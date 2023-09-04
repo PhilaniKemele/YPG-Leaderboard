@@ -61,11 +61,11 @@
     </div>
 
     <script>
-// Function to fetch and display JSON data from GitHub repository
+
 function fetchDataFromGitHub() {
     const githubDataUrl = 'https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json';
 
-    fetch(githubDataUrl, { cache: 'no-store' }) // Add cache control
+    fetch(githubDataUrl, { cache: 'no-store' })
         .then(response => response.json())
         .then(data => {
             document.getElementById("invincibleScore").textContent = data.invincible;
@@ -78,49 +78,43 @@ function fetchDataFromGitHub() {
         });
 }
 
-
-    // Call the function to fetch and display data when the page loads
     document.addEventListener('DOMContentLoaded', fetchDataFromGitHub);
 
-        // Function to update points
         function updatePoints() {
             const selectedNation = document.getElementById("nationSelect").value;
             const points = parseInt(document.getElementById("pointsInput").value);
             const password = document.getElementById("passwordInput").value;
 
-            // Check if the entered password matches the actual password
             if (password === "YPG2023") {
-                // Fetch the current SHA of the file from GitHub
+
                 fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
                     .then(response => response.json())
                     .then(fileData => {
-                        // Get the latest SHA value
+
                         const latestSHA = fileData.sha;
 
-                        // Fetch the current JSON data
                         fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
                             .then(response => response.json())
                             .then(data => {
-                                // Update the points for the selected nation
+
                                 data[selectedNation] += points;
 
-                                // Send the updated data back to the repository
                                 fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
                                     method: 'PUT',
                                     headers: {
-                                        'Authorization': 'Bearer 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', // Updated PAT here
+                                        'Authorization': 'Bearer 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',
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
                                         message: 'Update points for ' + selectedNation,
-                                        content: btoa(JSON.stringify(data, null, 4)), // Convert data to Base64
-                                        sha: latestSHA, // Use the latest SHA
+                                        content: btoa(JSON.stringify(data, null, 4)), 
+                                        sha: latestSHA, 
                                     }),
                                 })
                                     .then(response => {
                                         if (response.status === 200) {
                                             console.log('Points updated successfully');
-                                            // Update the displayed points on the webpage
+                                            
                                             document.getElementById(selectedNation + "Score").textContent = data[selectedNation];
                                         } else {
                                             console.error('Failed to update points');
@@ -142,45 +136,41 @@ function fetchDataFromGitHub() {
             }
         }
 
-        // Function to edit points
         function editPoints() {
             const editSelectedNation = document.getElementById("editNationSelect").value;
             const editPoints = parseInt(document.getElementById("editPointsInput").value);
             const editPassword = document.getElementById("editPasswordInput").value;
 
-            // Check if the entered password matches the actual password
             if (editPassword === "YPG2023") {
-                // Fetch the current SHA of the file from GitHub
+
                 fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
                     .then(response => response.json())
                     .then(fileData => {
-                        // Get the latest SHA value
+
                         const latestSHA = fileData.sha;
 
-                        // Fetch the current JSON data
                         fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
                             .then(response => response.json())
                             .then(data => {
-                                // Set the edited points for the selected nation
+
                                 data[editSelectedNation] = editPoints;
 
-                                // Send the updated data back to the repository
                                 fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
                                     method: 'PUT',
                                     headers: {
-                                        'Authorization': 'Bearer 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', // Updated PAT here
+                                        'Authorization': 'Bearer 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',
                                         'Content-Type': 'application/json',
                                     },
                                     body: JSON.stringify({
                                         message: 'Edit points for ' + editSelectedNation,
-                                        content: btoa(JSON.stringify(data, null, 4)), // Convert data to Base64
-                                        sha: latestSHA, // Use the latest SHA
+                                        content: btoa(JSON.stringify(data, null, 4)), 
+                                        sha: latestSHA, 
                                     }),
                                 })
                                     .then(response => {
                                         if (response.status === 200) {
                                             console.log('Points edited successfully');
-                                            // Update the displayed points on the webpage
+                                            
                                             document.getElementById(editSelectedNation + "Score").textContent = editPoints;
                                         } else {
                                             console.error('Failed to edit points');
