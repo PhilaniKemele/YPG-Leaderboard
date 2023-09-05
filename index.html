@@ -1,196 +1,476 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>YPG Scoreboard</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
 
-</head>
-<body>
-    <h1>YPG Scoreboard</h1>
-    
-    <div>
-        <h2>Nations</h2>
-        <ul>
-            <li>Invincible: <span id="invincibleScore">0</span> points</li>
-            <li>Unbeatable: <span id="unbeatableScore">0</span> points</li>
-            <li>Flawless: <span id="flawlessScore">0</span> points</li>
-            <li>Impact: <span id="impactScore">0</span> points</li>
-        </ul>
-    </div>
-    
-    <div>
-        <h2>Update Points</h2>
-        <form id="updateForm">
-            <label for="nationSelect">Select Nation:</label>
-            <select id="nationSelect">
-                <option value="invincible">Invincible</option>
-                <option value="unbeatable">Unbeatable</option>
-                <option value="flawless">Flawless</option>
-                <option value="impact">Impact</option>
-            </select>
-            <br>
-            <label for="pointsInput">Points:</label>
-            <input type="number" id="pointsInput" min="0">
-            <br>
-            <label for="passwordInput">Password:</label>
-            <input type="password" id="passwordInput">
-            <br>
-            <button type="button" onclick="updatePoints()">Update</button>
-        </form>
-    </div>
-    
-    <div>
-        <h2>Edit Points</h2>
-        <form id="editForm">
-            <label for="editNationSelect">Select Nation:</label>
-            <select id="editNationSelect">
-                <option value="invincible">Invincible</option>
-                <option value="unbeatable">Unbeatable</option>
-                <option value="flawless">Flawless</option>
-                <option value="impact">Impact</option>
-            </select>
-            <br>
-            <label for="editPointsInput">Edit Points:</label>
-            <input type="number" id="editPointsInput" min="0">
-            <br>
-            <label for="editPasswordInput">Password:</label>
-            <input type="password" id="editPasswordInput">
-            <br>
-            <button type="button" onclick="editPoints()">Edit</button>
-        </form>
-    </div>
+    <style>
 
-    <script>
+        body,
+        ul {
 
-function fetchDataFromGitHub() {
-    const githubDataUrl = 'https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json';
+            margin: 0;
+            padding: 0;
+            list-style: none;
 
-    fetch(githubDataUrl, { cache: 'no-store' })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("invincibleScore").textContent = data.invincible;
-            document.getElementById("unbeatableScore").textContent = data.unbeatable;
-            document.getElementById("flawlessScore").textContent = data.flawless;
-            document.getElementById("impactScore").textContent = data.impact;
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+        }
 
-    document.addEventListener('DOMContentLoaded', fetchDataFromGitHub);
+        body {
 
-        function updatePoints() {
-            const selectedNation = document.getElementById("nationSelect").value;
-            const points = parseInt(document.getElementById("pointsInput").value);
-            const password = document.getElementById("passwordInput").value;
+            background-color: #f0f0f0;
+            color: #333;
+            font-family: Arial, sans-serif;
 
-            if (password === "YPG2023") {
+        }
 
-                fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
-                    .then(response => response.json())
-                    .then(fileData => {
+        h1 {
 
-                        const latestSHA = fileData.sha;
+            text-align: center;
+            padding: 20px;
+            background-color: red;
+            color: white;
 
-                        fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
-                            .then(response => response.json())
-                            .then(data => {
+        }
 
-                                data[selectedNation] += points;
+        div {
 
-                                fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
-                                    method: 'PUT',
-                                    headers: {
-                                        'Authorization': 'Bearer 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',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        message: 'Update points for ' + selectedNation,
-                                        content: btoa(JSON.stringify(data, null, 4)), 
-                                        sha: latestSHA, 
-                                    }),
-                                })
-                                    .then(response => {
-                                        if (response.status === 200) {
-                                            console.log('Points updated successfully');
-                                            
-                                            document.getElementById(selectedNation + "Score").textContent = data[selectedNation];
-                                        } else {
-                                            console.error('Failed to update points');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                    });
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching SHA:', error);
-                    });
-            } else {
-                console.error('Invalid password');
+            background-color: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        }
+
+        h2 {
+
+            color: #333;
+            margin-bottom: 10px;
+
+        }
+
+        ul {
+
+            padding-left: 0;
+
+        }
+
+        li {
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 21px;
+
+        }
+
+        span {
+
+            font-weight: bold;
+            font-size: 30px;
+            color: red;
+            text-align: center;
+
+        }
+
+        label {
+
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 15px;
+
+        }
+
+        input[type="number"],
+        input[type="password"],
+        select {
+
+            width: 50%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 20px;
+
+        }
+
+        footer {
+
+            text-align: center;
+            padding: 10px 0;
+            background-color: red;
+            color: white;
+            font-size: 14px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+
+        }
+
+        .content {
+
+            padding-bottom: 200px;
+
+        }
+
+        .interactive-button {
+
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 18px;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+
+        }
+
+        .interactive-button:hover {
+
+            background-color: black;
+            transform: scale(1.30);
+
+        }
+
+        h1, h2, li, input, select, button {
+
+            transition: all 2.1s ease;
+
+        }
+
+        .disclaimer {
+
+            background-color: #f0f0f0;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+
+        }
+
+        @media (max-width: 768px) {
+            div {
+                margin: 10px;
             }
         }
 
-        function editPoints() {
-            const editSelectedNation = document.getElementById("editNationSelect").value;
-            const editPoints = parseInt(document.getElementById("editPointsInput").value);
-            const editPassword = document.getElementById("editPasswordInput").value;
+    </style>
 
-            if (editPassword === "YPG2023") {
+    </head>
 
-                fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
-                    .then(response => response.json())
-                    .then(fileData => {
+    <body>
 
-                        const latestSHA = fileData.sha;
+        <h1>YPG Scoreboard</h1>
 
-                        fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
-                            .then(response => response.json())
-                            .then(data => {
+        <div class="disclaimer">
+            <p><strong>Disclaimer:</strong> Server updates are immediate, but it may take some time for points data to reflect on this webpage for everyone to see.</p>
+        </div>   
+        
+        <div>
 
-                                data[editSelectedNation] = editPoints;
+            <h2>Nations</h2>
 
-                                fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
-                                    method: 'PUT',
-                                    headers: {
-                                        'Authorization': 'Bearer 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',
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({
-                                        message: 'Edit points for ' + editSelectedNation,
-                                        content: btoa(JSON.stringify(data, null, 4)), 
-                                        sha: latestSHA, 
-                                    }),
+            <ul>
+
+                <li>Invincible: <span id="invincibleScore">0</span> points</li>
+                <li>Unbeatable: <span id="unbeatableScore">0</span> points</li>
+                <li>Flawless: <span id="flawlessScore">0</span> points</li>
+                <li>Impact: <span id="impactScore">0</span> points</li>
+
+            </ul>
+
+            </div>
+        
+            <div>
+
+                <h2>Update Points</h2>
+
+                <form id="updateForm">
+
+                    <label for="nationSelect">Select Nation:</label>
+
+                    <select id="nationSelect">
+
+                        <option value="invincible">Invincible</option>
+                        <option value="unbeatable">Unbeatable</option>
+                        <option value="flawless">Flawless</option>
+                        <option value="impact">Impact</option>
+
+                    </select>
+
+                    <br>
+
+                    <label for="pointsInput">Points:</label>
+
+                    <input type="number" id="pointsInput" min="0">
+
+                    <br>
+
+                    <label for="passwordInput">Password:</label>
+
+                    <input type="password" id="passwordInput">
+
+                    <br>                  
+
+                    <button class="interactive-button" type="button" onclick="updatePoints()">Update</button>
+
+                    </form>
+
+                    </div>
+
+        
+            <div class="content">
+
+                <h2>Edit Points</h2>
+
+                <form id="editForm">
+
+                    <label for="editNationSelect">Select Nation:</label>
+
+                    <select id="editNationSelect">
+
+                        <option value="invincible">Invincible</option>
+                        <option value="unbeatable">Unbeatable</option>
+                        <option value="flawless">Flawless</option>
+                        <option value="impact">Impact</option>
+
+                    </select>
+
+                    <br>
+
+                    <label for="editPointsInput">Edit Points:</label>
+
+                    <input type="number" id="editPointsInput" min="0">
+
+                    <br>
+
+                    <label for="editPasswordInput">Password:</label>
+
+                    <input type="password" id="editPasswordInput">
+
+                    <br>
+
+                    <button class="interactive-button" type="button" onclick="editPoints()">Update</button>
+
+                    </form>
+
+                    </div>
+
+                    <script>
+
+                        function fetchDataFromGitHub() {
+                            
+                            const cachedData = localStorage.getItem('githubData');
+
+                            if (cachedData) {
+                                
+                                const data = JSON.parse(cachedData);
+
+                                displayData(data);
+
+                            }
+
+                            const githubDataUrl = 'https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json';
+
+                            fetch(githubDataUrl)
+                                .then(response => response.json())
+                                .then(data => {
+                                    
+                                    localStorage.setItem('githubData', JSON.stringify(data));
+
+                                    displayData(data);
+
                                 })
-                                    .then(response => {
-                                        if (response.status === 200) {
-                                            console.log('Points edited successfully');
-                                            
-                                            document.getElementById(editSelectedNation + "Score").textContent = editPoints;
-                                        } else {
-                                            console.error('Failed to edit points');
-                                        }
-                                    })
-                                    .catch(error => {
-                                        console.error('Error:', error);
-                                    });
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                    })
-                    .catch(error => {
-                        console.error('Error fetching SHA:', error);
-                    });
-            } else {
-                console.error('Invalid password');
-            }
-        }
-    </script>
-</body>
-</html>
+
+                                .catch(error => {
+
+                                    console.error('Error:', error);
+
+                                });
+                            }
+
+                            function displayData(data) {
+
+                                document.getElementById("invincibleScore").textContent = data.invincible;
+                                document.getElementById("unbeatableScore").textContent = data.unbeatable;
+                                document.getElementById("flawlessScore").textContent = data.flawless;
+                                document.getElementById("impactScore").textContent = data.impact;
+
+                            }
+
+                            fetchDataFromGitHub();
+
+                            setInterval(fetchDataFromGitHub, 5 * 60 * 1000);
+
+                                function updatePoints() {
+                                    const selectedNation = document.getElementById("nationSelect").value;
+                                    const points = parseInt(document.getElementById("pointsInput").value);
+                                    const password = document.getElementById("passwordInput").value;
+
+                                    if (password === "YPG2023") {
+
+                                        fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
+                                            .then(response => response.json())
+                                            .then(fileData => {
+
+                                                const latestSHA = fileData.sha;
+
+                                                fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
+                                                    .then(response => response.json())
+                                                    .then(data => {
+
+                                                        data[selectedNation] += points;
+
+                                                        fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
+
+                                                            method: 'PUT',
+                                                            headers: {
+                                                                'Authorization': 'Bearer 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',
+                                                                'Content-Type': 'application/json',
+                                                            },
+
+                                                            body: JSON.stringify({
+
+                                                                message: 'Update points for ' + selectedNation,
+                                                                content: btoa(JSON.stringify(data, null, 4)),
+                                                                sha: latestSHA,
+
+                                                            }),
+                                                            
+                                                        })
+
+                                                            .then(response => {
+
+                                                                if (response.status === 200) {
+
+                                                                    console.log('Points updated successfully');
+                                                                    alert('Points updated successfully');
+                                                                    
+                                                                    document.getElementById(selectedNation + "Score").textContent = data[selectedNation];
+                                                                } else {
+
+                                                                    console.error('Failed to update points');
+                                                                    alert('Failed to update points');
+
+                                                                }
+
+                                                            })
+
+                                                            .catch(error => {
+
+                                                                console.error('Error:', error);
+
+                                                            });
+
+                                                    })
+
+                                                    .catch(error => {
+
+                                                        console.error('Error:', error);
+
+                                                    });
+                                            })
+
+                                            .catch(error => {
+
+                                                console.error('Error fetching SHA:', error);
+
+                                            });
+                                    } else {
+
+                                        console.error('Invalid password');
+                                        alert('Invalid password');
+                                    }
+                                }
+
+                                function editPoints() {
+
+                                    const editSelectedNation = document.getElementById("editNationSelect").value;
+                                    const editPoints = parseInt(document.getElementById("editPointsInput").value);
+                                    const editPassword = document.getElementById("editPasswordInput").value;
+
+                                    if (editPassword === "YPG2023") {
+                                        
+                                        fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json')
+                                            .then(response => response.json())
+                                            .then(fileData => {
+                                                
+                                                const latestSHA = fileData.sha;
+
+                                                fetch('https://raw.githubusercontent.com/PhilaniKemele/YPG-Scoreboard/main/scoreboard.json')
+                                                    .then(response => response.json())
+                                                    .then(data => {
+
+                                                        data[editSelectedNation] = editPoints;
+
+                                                        fetch('https://api.github.com/repos/PhilaniKemele/YPG-Scoreboard/contents/scoreboard.json', {
+
+                                                            method: 'PUT',
+                                                            headers: {
+                                                                'Authorization': 'Bearer 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',
+                                                                'Content-Type': 'application/json',
+                                                            },
+
+                                                            body: JSON.stringify({
+
+                                                                message: 'Edit points for ' + editSelectedNation,
+                                                                content: btoa(JSON.stringify(data, null, 4)),
+                                                                sha: latestSHA,
+
+                                                            }),
+                                                        })
+                                                            .then(response => {
+
+                                                                if (response.status === 200) {
+
+                                                                    console.log('Points edited successfully');
+                                                                    alert('Points edited successfully');
+                                                                    
+                                                                    document.getElementById(editSelectedNation + "Score").textContent = editPoints;
+                                                                } else {
+
+                                                                    console.error('Failed to edit points');
+                                                                    alert('Failed to edit points');
+
+                                                                }
+                                                            })
+                                                            .catch(error => {
+
+                                                                console.error('Error:', error);
+
+                                                            });
+                                                    })
+
+                                                    .catch(error => {
+
+                                                        console.error('Error:', error);
+
+                                                    });
+                                            })
+
+                                            .catch(error => {
+
+                                                console.error('Error fetching SHA:', error);
+
+                                            });
+                                    } else {
+
+                                        console.error('Invalid password');
+                                        alert('Invalid password');
+
+                                    }
+                                }
+
+                                </script>
+
+                                <footer>
+                                    <p>&copy; 2023 YPG Scoreboard</p>
+                                </footer>
+
+                                </body>
+                                </html>
