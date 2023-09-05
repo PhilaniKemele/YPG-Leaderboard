@@ -1,6 +1,6 @@
 {
-    "invincible": 5000,
-    "unbeatable": 150,
+    "invincible": 50,
+    "unbeatable": 5000,
     "flawless": 6000,
     "impact": 90
 }
