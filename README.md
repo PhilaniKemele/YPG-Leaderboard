@@ -1,2 +1,2 @@
-# YPG-Scoreboard
-YPG Scoreboard
+# YPG-Leaderboard
+YPG Leaderboard
